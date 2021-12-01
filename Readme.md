@@ -35,3 +35,11 @@
 
 - 打包成的app exe的名称是上面的name
 
+### 项目启动
+- npm run start (万能命令)
+
+- webstorm中调试启动
+- 添加配置 node.js 
+- ![img.png](img.png)
+- debug就好了
+
