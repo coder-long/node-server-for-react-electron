@@ -6,3 +6,4 @@ package-lock.json
 /**/*.exe
 
 test.js
+/public/file

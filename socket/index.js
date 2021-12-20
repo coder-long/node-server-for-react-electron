@@ -23,7 +23,7 @@ module.exports = {
             Socket = socket
 
             socket.on('connected', (state) => {
-                console.log(state + '\n');
+                console.log(state);
             })
 
             socket.on('click1', function () {

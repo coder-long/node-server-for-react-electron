@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = require("./schema");
+const jwt = require('jsonwebtoken');
 const url = 'mongodb://localhost:27017/react-node-server-electron';
 let connectState = false;
 
@@ -46,6 +47,37 @@ let mongodb = {
         const user = mongoose.model('users', Schema.userSchema);
         return new Promise((resolve, reject) => {
             user.find(userInfo, (err, doc) => {
+                if (err) {
+                    reject(false);
+                } else {
+                    resolve(true);
+                }
+            })
+        })
+    },
+    //验证token
+    validateToken(token) {
+        return new Promise((resolve, reject) => {
+            let info = jwt.verify(token, 'hel666', (error, decoded) => {
+                if (error) {
+                    console.log(error.message)
+                    return
+                }
+                console.log(decoded)
+            });
+            resolve(info);
+        })
+    },
+    //文件上传
+    uploadFile(filemsg) {
+        filemsg = {
+            filename: filemsg.filename || '1638867556878@@App.js',
+            username: filemsg.username || "String",
+            uploadTime: Date.now()
+        }
+        const filelist = mongoose.model('filelist', Schema.fileSchema);
+        return new Promise((resolve, reject) => {
+            filelist.create({...filemsg}, (err, doc) => {
                 if (err) {
                     reject(err);
                 } else {

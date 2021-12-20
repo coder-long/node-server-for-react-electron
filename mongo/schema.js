@@ -6,7 +6,14 @@ const userSchema = new Schema({
     password: String,
 });
 
+const fileSchema = new Schema({
+    filename: String,
+    username: String,
+    uploadTime: Date
+})
+
 
 module.exports = {
     userSchema,
+    fileSchema
 }
