@@ -18,8 +18,8 @@ router.post('/login', (req, res) => {
             let signkey = 'hel666';
             //生成token
             const token = 'Bearer' + jwt.sign({
-                    username: req.body.userInfo.username,
-                    password: req.body.userInfo.password,
+                    username: req.body.userInfo.login_username,
+                    password: req.body.userInfo.login_password,
                 },
                 signkey,
                 {
@@ -34,6 +34,22 @@ router.post('/login', (req, res) => {
     }, err => {
         res.status(500).send(err);
     })
+})
+
+router.post('/register', (req, res) => {
+    if (req.body.userInfo.hasOwnProperty('register_username') && req.body.userInfo.hasOwnProperty('register_password') && req.body.userInfo.hasOwnProperty('register_rep_password')) {
+        mongodb.register(req.body.userInfo).then(result => {
+            if (result) {
+                res.status(200).send('注册成功。')
+            } else {
+                res.status(500).send('注册失败。')
+            }
+        }).catch((err) => {
+            res.status(500).send(err)
+        })
+    } else {
+        res.status(400).send('no user || no password .')
+    }
 })
 
 module.exports = router;

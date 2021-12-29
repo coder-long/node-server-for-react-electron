@@ -44,13 +44,36 @@ let mongodb = {
         })
     },
     validateLogin(userInfo) {
+        const userStructure = {
+            username: userInfo.login_username,
+            password: userInfo.login_password
+        }
         const user = mongoose.model('users', Schema.userSchema);
         return new Promise((resolve, reject) => {
-            user.find(userInfo, (err, doc) => {
+            user.find(userStructure, (err, doc) => {
                 if (err) {
                     reject(false);
                 } else {
-                    resolve(true);
+                    if (!doc.length) {
+                        resolve(false);
+                    }
+                    resolve(true)
+                }
+            })
+        })
+    },
+    register(userInfo) {
+        const userStructure = {
+            username: userInfo.register_username,
+            password: userInfo.register_password
+        }
+        const user = mongoose.model('users', Schema.userSchema);
+        return new Promise((resolve, reject) => {
+            user.create(userStructure, (err, doc) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve(doc)
                 }
             })
         })
