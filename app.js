@@ -36,7 +36,7 @@ app.use(expressJwt({
     algorithms: ['HS256'],
     credentialsRequired: false,//是否允许无token请求
 }).unless({
-    path: ['/', '/user/login']//除了这个地址，其他的URL都需要验证
+    path: ['/', '/users/login', '/users/register',"/validateToken"]//除了这个地址，其他的URL都需要验证
 }))
 
 app.use('/', indexRouter);
@@ -47,13 +47,13 @@ app.use('/file', fileRouter);
 // app.use(function (req, res, next) {
 //     let token = req.headers['authorization'];
 //     if (!token) {
-//         return next();
+//         return next(createError(401));
 //     } else {
 //         mongodb.validateToken(token).then((data) => {
 //             req.data = data;
 //             return next();
 //         }).catch((error) => {
-//             console.log(error);
+//             console.log(error);Bearer <token>
 //             return next();
 //         })
 //     }

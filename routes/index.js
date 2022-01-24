@@ -1,11 +1,26 @@
 var express = require('express');
 var router = express.Router();
 const axios = require('axios');
+const {validateToken} = require('../mongo')
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
     res.render('index', {title: 'Express'});
 });
+
+router.get('/test', (req, res) => {
+    res.json('aa')
+})
+
+router.post('/validateToken', (req, res) => {
+    if (req.body.hasOwnProperty('token') && req.body.token) {
+        validateToken(req.body.token).then(result => {
+            res.json(result)
+        })
+    } else {
+        res.status(400)
+    }
+})
 
 router.get("/skiell", (req, res) => {
     axios.get('https://miaomiao.scmttec.com/seckill/seckill/checkstock2.do?id=1276 ', {

@@ -17,13 +17,14 @@ router.post('/login', (req, res) => {
             //秘钥
             let signkey = 'hel666';
             //生成token
-            const token = 'Bearer' + jwt.sign({
-                    username: req.body.userInfo.login_username,
-                    password: req.body.userInfo.login_password,
+            const token = 'Bearer ' + jwt.sign({
+                    username: req.body.userInfo.username,
+                    password: req.body.userInfo.password,
                 },
                 signkey,
                 {
-                    expiresIn: 3600 * 24 * 3,//3天
+                    expiresIn: 3600 * 24,//1天 后失效
+                    // expiresIn: 5,// 单位为秒 5秒后失效
                 }
             );
             console.log('token', token);
@@ -37,18 +38,14 @@ router.post('/login', (req, res) => {
 })
 
 router.post('/register', (req, res) => {
-    if (req.body.userInfo.hasOwnProperty('register_username') && req.body.userInfo.hasOwnProperty('register_password') && req.body.userInfo.hasOwnProperty('register_rep_password')) {
+    if (req.body.userInfo.hasOwnProperty('username') && req.body.userInfo.hasOwnProperty('password') && req.body.userInfo.hasOwnProperty('re_password')) {
         mongodb.register(req.body.userInfo).then(result => {
-            if (result) {
-                res.status(200).send('注册成功。')
-            } else {
-                res.status(500).send('注册失败。')
-            }
+            res.status(200).send(result)
         }).catch((err) => {
             res.status(500).send(err)
         })
     } else {
-        res.status(400).send('no user || no password .')
+        res.status(400).send('no user || no password.')
     }
 })
 

@@ -45,8 +45,8 @@ let mongodb = {
     },
     validateLogin(userInfo) {
         const userStructure = {
-            username: userInfo.login_username,
-            password: userInfo.login_password
+            username: userInfo.username,
+            password: userInfo.password
         }
         const user = mongoose.model('users', Schema.userSchema);
         return new Promise((resolve, reject) => {
@@ -64,16 +64,26 @@ let mongodb = {
     },
     register(userInfo) {
         const userStructure = {
-            username: userInfo.register_username,
-            password: userInfo.register_password
+            username: userInfo.username,
+            password: userInfo.password
         }
         const user = mongoose.model('users', Schema.userSchema);
         return new Promise((resolve, reject) => {
-            user.create(userStructure, (err, doc) => {
+            user.find({username: userInfo.username}, (err, doc) => {
                 if (err) {
-                    reject(err)
+                    reject(err);
                 } else {
-                    resolve(doc)
+                    if (!doc.length) {
+                        user.create(userStructure, (err, doc) => {
+                            if (err) {
+                                reject(err)
+                            } else {
+                                resolve({code: 1, msg: '注册成功', data: doc})
+                            }
+                        })
+                    } else {
+                        resolve({code: 2, msg: '当前用户已存在！', data: {}})
+                    }
                 }
             })
         })
@@ -81,14 +91,15 @@ let mongodb = {
     //验证token
     validateToken(token) {
         return new Promise((resolve, reject) => {
-            let info = jwt.verify(token, 'hel666', (error, decoded) => {
+            jwt.verify(token.split('Bearer ')[1], 'hel666', (error, decoded) => {
                 if (error) {
-                    console.log(error.message)
-                    return
+                    console.log("error.message", error.message)
+                    resolve({msg: error.message, bValid: false})
+                } else {
+                    console.log("decoded", decoded)
+                    resolve({mgs: decoded.exp, bValid: true})
                 }
-                console.log(decoded)
             });
-            resolve(info);
         })
     },
     //文件上传
