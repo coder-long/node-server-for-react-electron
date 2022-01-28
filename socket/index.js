@@ -12,6 +12,7 @@ module.exports = {
         let io = socket_io(server, {cors: true});
         io.on('connect', (socket) => {
             socket.on('url', (url) => {
+                console.log(url)
                 if (connectHostArr.indexOf(url) === -1) {
                     connectHostArr.push(url);
                 }
@@ -37,9 +38,18 @@ module.exports = {
 
         //断开连接
         io.on('disconnect', (socket) => {
-            console.log(socket)
+            console.log('连接断开',socket)
             socket.on("disconnected", (state) => {
                 console.log(state)
+            })
+
+            socket.on(url => {
+                console.log('disconnected', url);
+                let index = connectHostArr.findIndex(item => item === url)
+                if (index !== -1) {
+                    connectHostArr.splice(index, 1)
+                }
+                console.log('当前连接数量:' + connectHostArr.length);
             })
         })
     },

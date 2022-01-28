@@ -26,7 +26,7 @@ router.post('/upload', (req, res) => {
 
 router.get('/download', (req, res) => {
     console.log(req, res);
-    res.sendFile(req.file)
+    res.sendFile(req.file);
 })
 
 module.exports = router;

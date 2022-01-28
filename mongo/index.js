@@ -52,12 +52,13 @@ let mongodb = {
         return new Promise((resolve, reject) => {
             user.find(userStructure, (err, doc) => {
                 if (err) {
-                    reject(false);
+                    reject(err);
                 } else {
                     if (!doc.length) {
-                        resolve(false);
+                        resolve({});
+                    } else {
+                        resolve(doc[0]._doc)
                     }
-                    resolve(true)
                 }
             })
         })
@@ -86,6 +87,62 @@ let mongodb = {
                     }
                 }
             })
+        })
+    },
+    updateUser(userInfo) {
+        const user = mongoose.model('users', Schema.userSchema);
+        return new Promise((resolve, reject) => {
+            user.updateOne({username: userInfo.username}, Object.assign({}, userInfo, {update_time: Date.now()}), (err, doc) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(doc);
+                }
+            })
+        })
+    },
+    getUserInfo(username) {
+        const user = mongoose.model('users', Schema.userSchema);
+        return new Promise((resolve, reject) => {
+            user.find({username: username}, (err, doc) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(doc[0]._doc)
+                }
+            })
+        })
+    },
+    getAllUser(curPage, pageSize) {
+        const user = mongoose.model('users', Schema.userSchema);
+        return new Promise((resolve, reject) => {
+            user.find({}).exec((err, doc) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    let query = user.find({})
+                    query.skip((curPage - 1) * pageSize).limit(pageSize);
+                    query.exec((err, result) => {
+                        if (err) {
+                            reject(err)
+                        } else {
+                            resolve({
+                                curPage: ~~curPage,
+                                pageSize: ~~pageSize,
+                                total: doc.length,
+                                tableData: doc || [],
+                            });
+                        }
+                    })
+                }
+            })
+            // user.find({}, null, {skip: (curPage - 1) * pageSize, limit: pageSize}, (err, doc) => {
+            //     if (err) {
+            //         reject(err);
+            //     } else {
+            //         resolve(doc.map(item => item._doc));
+            //     }
+            // })
         })
     },
     //验证token
