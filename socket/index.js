@@ -9,8 +9,11 @@ let Socket = null
 module.exports = {
     initSocketio(server) {
         //解决socket 跨域 加{cors: true}
-        let io = socket_io(server, {cors: true});
+        let io = socket_io(server, { cors: true });
         io.on('connect', (socket) => {
+
+            console.log(socket.connected)
+
             socket.on('url', (url) => {
                 console.log(url)
                 if (connectHostArr.indexOf(url) === -1) {
@@ -30,15 +33,15 @@ module.exports = {
             socket.on('click1', function () {
                 console.log('监听点击事件');
                 var datas = [1, 2, 3, 4, 5];
-                socket.emit('click2', {datas: datas});
-                socket.broadcast.emit('click2', {datas: datas});
+                socket.emit('click2', { datas: datas });
+                socket.broadcast.emit('click2', { datas: datas });
             })
 
         })
 
         //断开连接
         io.on('disconnect', (socket) => {
-            console.log('连接断开',socket)
+            console.log('连接断开', socket)
             socket.on("disconnected", (state) => {
                 console.log(state)
             })
